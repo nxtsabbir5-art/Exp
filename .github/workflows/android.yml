@@ -3,12 +3,13 @@ name: Build ZenBubble Music Pill
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -24,16 +25,18 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Extract source ZIP
+        run: |
+          unzip -o "ZenBubble_Music_Pill_Source_v1 (1).zip" -d source
 
-      - name: Build debug APK
-        run: gradle assembleDebug
+      - name: Build APK
+        working-directory: source/ZenBubble_Music_Pill_Source_v1
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZenBubble-Music-Pill-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: ZenBubble-Music-Pill
+          path: source/ZenBubble_Music_Pill_Source_v1/app/build/outputs/apk/debug/app-debug.apk
